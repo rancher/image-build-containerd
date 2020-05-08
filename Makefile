@@ -10,10 +10,10 @@ image-push:
 
 .PHONY: scan
 image-scan:
-	trivy --severity $(SEVERITIES) --no-progress --ignore-unfixed ranchertest/containerd:$(TAG)
+	trivy --severity $(SEVERITIES) --no-progress --skip-update --ignore-unfixed ranchertest/containerd:$(TAG)
 
 .PHONY: image-manifest
 image-manifest:
 	docker image inspect ranchertest/containerd:$(TAG)
 	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ranchertest/containerd:$(TAG) \
-		$(shell docker image inspect ranchertest/containerd:$(TAG) | jq -r \'.[] | .RepoDigests[0]\')
+		$(shell docker image inspect ranchertest/containerd:$(TAG) | jq -r '.[] | .RepoDigests[0]')

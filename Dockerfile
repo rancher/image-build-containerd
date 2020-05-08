@@ -9,6 +9,7 @@ RUN apt update     && \
     apt upgrade -y && \ 
     apt install -y ca-certificates git \
                    wget unzip btrfs-tools libseccomp-dev
+
 RUN wget -c https://github.com/google/protobuf/releases/download/v${TAG}/protoc-${TAG}-linux-x86_64.zip && \
     unzip protoc-${TAG}-linux-x86_64.zip -d /usr/local
 RUN go get github.com/containerd/containerd         && \
