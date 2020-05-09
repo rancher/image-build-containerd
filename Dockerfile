@@ -5,8 +5,8 @@ FROM ${UBI_IMAGE} as ubi
 
 FROM ${GO_IMAGE} as builder
 ARG TAG="" 
-RUN apt update                           && \ 
-    apt upgrade -y                       && \ 
+RUN apt update                                        && \ 
+    apt upgrade -y                                    && \ 
     apt install -y ca-certificates git wget libbtrfs-dev \
                    unzip btrfs-tools libseccomp-dev
 
@@ -18,10 +18,6 @@ RUN git clone --depth=1 https://github.com/containerd/containerd.git $GOPATH/src
     git checkout tags/${TAG} -b ${TAG}                                                                            && \
     make                                                                                                          && \
     make install
-# RUN GO111MODULE=on go get github.com/containerd/containerd@${TAG} && \
-#     cd $GOPATH/src/github.com/containerd/containerd               && \
-#     make                                                          && \
-#     make install 
 
 FROM ubi
 RUN microdnf update -y && \ 
