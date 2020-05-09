@@ -52,7 +52,7 @@ steps:
   - name: dockersock
     path: /var/run
   commands:
-  - TAG=${DRONE_TAG} make image-manifest
+  - V_TAG=${DRONE_TAG} make image-manifest
   when:
     event:
     - tag
