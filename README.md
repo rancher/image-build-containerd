@@ -1,7 +1,7 @@
-# ranchertest/containerd
+# rancher/containerd
 
 ## Build
 
 ```sh
-TAG=0.4.0 make
+TAG=v1.3.6-k3s2 make
 ```

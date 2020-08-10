@@ -1,5 +1,5 @@
 ARG UBI_IMAGE=registry.access.redhat.com/ubi7/ubi-minimal:latest
-ARG GO_IMAGE=ranchertest/build-base:v1.14.2
+ARG GO_IMAGE=rancher/build-base:v1.14.2
 
 FROM ${UBI_IMAGE} as ubi
 
