@@ -16,11 +16,11 @@ RUN git clone --depth=1 https://github.com/rancher/containerd.git $GOPATH/src/gi
     cd $GOPATH/src/github.com/containerd/containerd                                                            && \
     git fetch --all --tags --prune                                                                             && \
     git checkout tags/${TAG} -b ${TAG}                                                                         && \
-    make PACKAGE=github.com/rancher/containerd                                                                 && \
+    make PACKAGE=github.com/rancher/containerd VERSION=${TAG}                                                  && \
     make install
 
 FROM ubi
-RUN microdnf update -y && \ 
+RUN microdnf update -y && \
     rm -rf /var/cache/yum
 
 COPY --from=builder /go/src/github.com/containerd/containerd/bin /usr/local/bin
