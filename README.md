@@ -1,4 +1,4 @@
-# rancher/containerd
+# rancher/hardened-containerd
 
 ## Build
 
