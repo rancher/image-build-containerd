@@ -16,7 +16,7 @@ RUN git clone --depth=1 https://github.com/rancher/containerd.git $GOPATH/src/gi
     cd $GOPATH/src/github.com/containerd/containerd                                                            && \
     git fetch --all --tags --prune                                                                             && \
     git checkout tags/${TAG} -b ${TAG}                                                                         && \
-    make PACKAGE=github.com/rancher/containerd VERSION=${TAG} EXTRA_LDFLAGS='-extldflags=-static' BUILDTAGS='apparmor seccomp selinux'             && \
+    make PACKAGE=github.com/rancher/containerd VERSION=${TAG} BUILDTAGS='apparmor seccomp selinux'             && \
     make install
 
 FROM ubi
