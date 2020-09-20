@@ -1,26 +1,52 @@
 ARG UBI_IMAGE=registry.access.redhat.com/ubi7/ubi-minimal:latest
-ARG GO_IMAGE=rancher/hardened-build-base:v1.14.2-amd64
-
+ARG GO_IMAGE=rancher/hardened-build-base:v1.13.15b4
 FROM ${UBI_IMAGE} as ubi
-
 FROM ${GO_IMAGE} as builder
-ARG TAG=""
-RUN apt update                                        && \
-    apt upgrade -y                                    && \
-    apt install -y ca-certificates git wget libbtrfs-dev \
-    unzip btrfs-tools libseccomp-dev libselinux-dev zlib1g-dev
-
-RUN wget -c https://github.com/google/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip && \
-    unzip protoc-3.11.4-linux-x86_64.zip -d /usr/local && ldconfig
-RUN git clone --depth=1 https://github.com/rancher/containerd.git $GOPATH/src/github.com/containerd/containerd && \
-    cd $GOPATH/src/github.com/containerd/containerd                                                            && \
-    git fetch --all --tags --prune                                                                             && \
-    git checkout tags/${TAG} -b ${TAG}                                                                         && \
-    make PACKAGE=github.com/rancher/containerd VERSION=${TAG} BUILDTAGS='apparmor seccomp selinux'             && \
-    make install
+# setup required packages
+RUN set -x \
+ && apk --no-cache add \
+    btrfs-progs-dev \
+    btrfs-progs-static \
+    file \
+    gcc \
+    git \
+    libselinux-dev \
+    libseccomp-dev \
+    make \
+    mercurial \
+    subversion \
+    unzip
+ADD https://github.com/google/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip .
+RUN unzip protoc-3.11.4-linux-x86_64.zip -d /usr
+# setup containerd build
+ARG SRC="github.com/rancher/containerd"
+ARG PKG="github.com/containerd/containerd"
+ARG TAG="v1.3.6-k3s2"
+RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
+WORKDIR $GOPATH/src/${PKG}
+RUN git fetch --all --tags --prune
+RUN git checkout tags/${TAG} -b ${TAG}
+ENV GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo"
+ENV GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}"
+RUN export GO_LDFLAGS="-linkmode=external \
+    -X ${PKG}/version.Version=${TAG} \
+    -X ${PKG}/version.Package=${SRC} \
+    -X ${PKG}/version.Revision=$(git rev-parse HEAD) \
+    " \
+ && go-build-static.sh ${GO_BUILDFLAGS} -o bin/ctr                      ./cmd/ctr \
+ && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd               ./cmd/containerd \
+ && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-stress        ./cmd/containerd-stress \
+ && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim          ./cmd/containerd-shim \
+ && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 \
+ && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
+RUN go-assert-static.sh bin/*
+RUN go-assert-boring.sh \
+    bin/ctr \
+    bin/containerd
+RUN install -s bin/* /usr/local/bin
+RUN containerd --version
 
 FROM ubi
 RUN microdnf update -y && \
     rm -rf /var/cache/yum
-
-COPY --from=builder /go/src/github.com/containerd/containerd/bin /usr/local/bin
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
