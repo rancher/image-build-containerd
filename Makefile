@@ -1,19 +1,40 @@
 SEVERITIES = HIGH,CRITICAL
 
-.PHONY: all
-all:
-	docker build --build-arg TAG=$(TAG) -t rancher/hardened-containerd:$(TAG) .
+ifeq ($(ARCH),)
+ARCH=$(shell go env GOARCH)
+endif
+
+ORG ?= rancher
+PKG ?= github.com/containerd/containerd
+SRC ?= github.com/rancher/containerd
+TAG ?= v1.3.6-k3s2
+
+ifneq ($(DRONE_TAG),)
+TAG := $(DRONE_TAG)
+endif
+
+.PHONY: image-build
+image-build:
+	docker build \
+		--build-arg PKG=$(PKG) \
+		--build-arg SRC=$(SRC) \
+		--build-arg TAG=$(TAG) \
+		--tag $(ORG)/hardened-containerd:$(TAG) \
+		--tag $(ORG)/hardened-containerd:$(TAG)-$(ARCH) \
+	.
 
 .PHONY: image-push
 image-push:
-	docker push rancher/hardened-containerd:$(TAG) >> /dev/null
-
-.PHONY: scan
-image-scan:
-	trivy --severity $(SEVERITIES) --no-progress --skip-update --ignore-unfixed rancher/hardened-containerd:$(TAG)
+	docker push $(ORG)/hardened-containerd:$(TAG)-$(ARCH)
 
 .PHONY: image-manifest
 image-manifest:
-	docker image inspect rancher/hardened-containerd:$(TAG)
-	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create rancher/hardened-containerd:$(TAG) \
-		$(shell docker image inspect rancher/hardened-containerd:$(TAG) | jq -r '.[] | .RepoDigests[0]')
+	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create --amend \
+		$(ORG)/hardened-containerd:$(TAG) \
+		$(ORG)/hardened-containerd:$(TAG)-$(ARCH)
+	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push \
+		$(ORG)/hardened-containerd:$(TAG)
+
+.PHONY: image-scan
+image-scan:
+	trivy --severity $(SEVERITIES) --no-progress --ignore-unfixed $(ORG)/hardened-containerd:$(TAG)
