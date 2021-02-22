@@ -12,6 +12,7 @@ RUN set -x \
     git \
     libselinux-dev \
     libseccomp-dev \
+    libseccomp-static \
     make \
     mercurial \
     subversion \
