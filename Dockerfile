@@ -17,18 +17,19 @@ RUN set -x \
     mercurial \
     subversion \
     unzip
-ADD https://github.com/google/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip .
-RUN unzip protoc-3.11.4-linux-x86_64.zip -d /usr
+ADD https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip .
+RUN unzip protoc-3.17.3-linux-x86_64.zip -d /usr
 # setup containerd build
-ARG SRC="github.com/rancher/containerd"
+ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v1.3.6-k3s2"
+ARG TAG="v1.4.8-k3s1"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --all --tags --prune
 RUN git checkout tags/${TAG} -b ${TAG}
 ENV GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo"
 ENV GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}"
+RUN go mod edit --replace google.golang.org/grpc=google.golang.org/grpc@v1.27.1
 RUN export GO_LDFLAGS="-linkmode=external \
     -X ${PKG}/version.Version=${TAG} \
     -X ${PKG}/version.Package=${SRC} \
