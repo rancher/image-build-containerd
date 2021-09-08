@@ -22,7 +22,7 @@ RUN unzip protoc-3.17.3-linux-x86_64.zip -d /usr
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v1.4.8-k3s1"
+ARG TAG="v1.4.9-k3s1"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --all --tags --prune
