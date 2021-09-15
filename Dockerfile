@@ -29,7 +29,7 @@ RUN git fetch --all --tags --prune
 RUN git checkout tags/${TAG} -b ${TAG}
 ENV GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo"
 ENV GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}"
-RUN go mod edit --replace google.golang.org/grpc=google.golang.org/grpc@v1.27.1 && go mod tidy
+RUN go mod edit --replace google.golang.org/grpc=google.golang.org/grpc@v1.27.1 && go mod tidy && test -d vendor && go mod vendor || true
 RUN export GO_LDFLAGS="-linkmode=external \
     -X ${PKG}/version.Version=${TAG} \
     -X ${PKG}/version.Package=${SRC} \
