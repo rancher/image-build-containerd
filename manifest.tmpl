@@ -1,0 +1,12 @@
+image: rancher/hardened-containerd:{{build.tag}}
+manifests:
+  -
+    image: rancher/hardened-containerd:{{build.tag}}-amd64
+    platform:
+      architecture: amd64
+      os: linux
+  -
+    image: rancher/hardened-containerd:{{build.tag}}-s390x
+    platform:
+      architecture: s390x
+      os: linux
