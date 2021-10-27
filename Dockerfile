@@ -1,7 +1,8 @@
 ARG UBI_IMAGE=registry.access.redhat.com/ubi7/ubi-minimal:latest
-ARG GO_IMAGE=rancher/hardened-build-base:v1.16.7b7
+ARG GO_IMAGE=rancher/hardened-build-base:v1.16.9b7
 FROM ${UBI_IMAGE} as ubi
 FROM ${GO_IMAGE} as builder
+ARG ARCH="amd64"
 # setup required packages
 RUN set -x \
  && apk --no-cache add \
@@ -17,8 +18,13 @@ RUN set -x \
     mercurial \
     subversion \
     unzip
-ADD https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip .
-RUN unzip protoc-3.17.3-linux-x86_64.zip -d /usr
+RUN if [ "${ARCH}" == "s390x" ]; then \
+        curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-s390_64.zip; \
+        unzip protoc-3.17.3-linux-s390_64.zip -d /usr; \
+    else \
+        curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip; \
+        unzip protoc-3.17.3-linux-x86_64.zip -d /usr; \
+    fi
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
@@ -42,9 +48,11 @@ RUN export GO_LDFLAGS="-linkmode=external \
  && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 \
  && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
 RUN go-assert-static.sh bin/*
-RUN go-assert-boring.sh \
-    bin/ctr \
-    bin/containerd
+RUN if [ "${ARCH}" != "s390x" ]; then \
+        go-assert-boring.sh \
+        bin/ctr \
+        bin/containerd; \
+    fi
 RUN install -s bin/* /usr/local/bin
 RUN containerd --version
 

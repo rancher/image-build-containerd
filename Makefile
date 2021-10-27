@@ -25,6 +25,7 @@ image-build:
 		--build-arg PKG=$(PKG) \
 		--build-arg SRC=$(SRC) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
+		--build-arg ARCH=$(ARCH) \
 		--tag $(ORG)/hardened-containerd:$(TAG) \
 		--tag $(ORG)/hardened-containerd:$(TAG)-$(ARCH) \
 	.
