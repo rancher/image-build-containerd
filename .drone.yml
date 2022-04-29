@@ -11,6 +11,7 @@ steps:
   pull: always
   image: rancher/hardened-build-base:v1.16.10b7
   commands:
+  - docker pull --quiet registry.suse.com/bci/bci-base:latest
   - make DRONE_TAG=${DRONE_TAG}
   volumes:
   - name: docker
