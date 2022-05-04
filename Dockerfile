@@ -28,7 +28,7 @@ RUN if [ "${ARCH}" == "s390x" ]; then \
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v1.5.9-k3s1"
+ARG TAG="v1.5.11-k3s2"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --all --tags --prune
