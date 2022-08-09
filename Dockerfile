@@ -4,20 +4,13 @@ FROM ${BCI_IMAGE} as bci
 FROM ${GO_IMAGE} as builder
 ARG ARCH="amd64"
 # setup required packages
-RUN set -x && \
-    apk --no-cache add \
-    btrfs-progs-dev \
-    btrfs-progs-static \
-    file \
-    gcc \
-    git \
-    libselinux-dev \
-    libseccomp-dev \
-    libseccomp-static \
-    make \
-    mercurial \
-    subversion \
-    unzip
+RUN zypper update -y && \
+    zypper --non-interactive install \
+        unzip \
+        libbtrfs-devel \
+        libselinux-devel \
+        libseccomp-devel
+
 RUN if [ "${ARCH}" == "s390x" ]; then \
         curl -LO https://github.com/google/protobuf/releases/download/v3.20.1/protoc-3.20.1-linux-s390_64.zip; \
         unzip protoc-3.20.1-linux-s390_64.zip -d /usr; \
@@ -35,6 +28,8 @@ RUN git fetch --all --tags --prune
 RUN git checkout tags/${TAG} -b ${TAG}
 ENV GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo"
 ENV GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}"
+ENV CC=/usr/local/musl/bin/musl-gcc
+ENV CGO_CFLAGS="-idirafter /usr/include"
 RUN export GO_LDFLAGS="-linkmode=external \
     -X ${PKG}/version.Version=${TAG} \
     -X ${PKG}/version.Package=${SRC} \
