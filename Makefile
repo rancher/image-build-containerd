@@ -8,7 +8,7 @@ BUILD_META=-build$(shell TZ=UTC date +%Y%m%d)
 ORG ?= rancher
 PKG ?= github.com/containerd/containerd
 SRC ?= github.com/k3s-io/containerd
-TAG ?= v1.5.9-k3s1$(BUILD_META)
+TAG ?= v1.6.10-k3s1$(BUILD_META)
 
 ifneq ($(DRONE_TAG),)
 TAG := $(DRONE_TAG)
