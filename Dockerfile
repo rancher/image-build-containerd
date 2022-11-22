@@ -1,5 +1,5 @@
 ARG BCI_IMAGE=registry.suse.com/bci/bci-base:15.3.17.20.12
-ARG GO_IMAGE=rancher/hardened-build-base:v1.17.7b7
+ARG GO_IMAGE=rancher/hardened-build-base:v1.19.3b1
 FROM ${BCI_IMAGE} as bci
 FROM ${GO_IMAGE} as builder
 ARG ARCH="amd64"
@@ -28,7 +28,7 @@ RUN if [ "${ARCH}" == "s390x" ]; then \
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v1.5.9-k3s1"
+ARG TAG="v1.6.10-k3s1"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --all --tags --prune
