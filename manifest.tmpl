@@ -1,14 +1,14 @@
 image: rancher/hardened-containerd:{{build.tag}}
 manifests:
-  - image: rancher/hardened-containerd:{{build.tag}}-linux-amd64
+  - image: rancher/hardened-containerd:{{build.tag}}-amd64-linux
     platform:
       architecture: amd64
       os: linux
-  - image: rancher/hardened-containerd:{{build.tag}}-linux-s390x
+  - image: rancher/hardened-containerd:{{build.tag}}-s390x-linux
     platform:
       architecture: s390x
       os: linux
-  - image: rancher/hardened-containerd:{{build.tag}}-windows-amd64
+  - image: rancher/hardened-containerd:{{build.tag}}-amd64-windows
     platform:
       architecture: amd64
       os: windows
