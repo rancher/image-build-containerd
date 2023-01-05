@@ -35,7 +35,7 @@ RUN export GO_LDFLAGS="\
     -X ${PKG}/version.Version=${TAG} \
     -X ${PKG}/version.Package=${SRC} \
     -X ${PKG}/version.Revision=$(git rev-parse HEAD) \
-    " \
+    " CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc \
  && go build ${GO_BUILDFLAGS} -o bin/ctr.exe ./cmd/ctr \
  && go build ${GO_BUILDFLAGS} -o bin/containerd.exe ./cmd/containerd \
  && DESTDIR=$(pwd)/bin script/setup/install-runhcs-shim
