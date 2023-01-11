@@ -34,13 +34,13 @@ RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
 RUN git checkout tags/${TAG} -b ${TAG}
-ENV GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo"
-ENV GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}"
 RUN export GO_LDFLAGS="-linkmode=external \
     -X ${PKG}/version.Version=${TAG} \
     -X ${PKG}/version.Package=${SRC} \
     -X ${PKG}/version.Revision=$(git rev-parse HEAD) \
     " \
+ && export GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo" \
+ && export GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}" \
  && go-build-static.sh ${GO_BUILDFLAGS} -o bin/ctr                      ./cmd/ctr \
  && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd               ./cmd/containerd \
  && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-stress        ./cmd/containerd-stress \

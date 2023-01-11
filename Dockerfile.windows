@@ -26,21 +26,14 @@ RUN curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
 ARG TAG="v1.6.14-k3s1"
-RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
+RUN git clone --depth=1 https://${SRC}.git ${GOPATH}/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
 RUN git checkout tags/${TAG} -b ${TAG}
-ENV GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src"
-RUN export GO_LDFLAGS="\
-    -X ${PKG}/version.Version=${TAG} \
-    -X ${PKG}/version.Package=${SRC} \
-    -X ${PKG}/version.Revision=$(git rev-parse HEAD) \
-    " CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc \
- && go build ${GO_BUILDFLAGS} -o bin/ctr.exe ./cmd/ctr \
- && go build ${GO_BUILDFLAGS} -o bin/containerd.exe ./cmd/containerd \
- && DESTDIR=$(pwd)/bin script/setup/install-runhcs-shim
-RUN install -s bin/* /usr/local/bin
-RUN file /usr/local/bin/ctr.exe /usr/local/bin/containerd.exe /usr/local/bin/containerd-shim-runhcs-v1.exe
+RUN export CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc \
+ && make binaries GOOS=windows VERSION=${TAG} \
+ && install -s bin/* /usr/local/bin \
+ && strings /usr/local/bin/containerd.exe | grep -F "${TAG}"
 
 FROM bci
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
