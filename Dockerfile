@@ -24,7 +24,7 @@ RUN if [ "${ARCH}" == "s390x" ]; then \
         unzip protoc-3.17.3-linux-s390_64.zip -d /usr; \
     elif [ "${ARCH}" == "arm64" ]; then \
         curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-aarch_64.zip; \
-        unzip protoc-3.17.3-linux-s390_64.zip -d /usr; \
+        unzip protoc-3.17.3-linux-aarch_64.zip -d /usr; \
     else \
         curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip; \
         unzip protoc-3.17.3-linux-x86_64.zip -d /usr; \
