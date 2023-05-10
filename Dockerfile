@@ -51,7 +51,7 @@ RUN export GO_LDFLAGS="-linkmode=external \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 && \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
 RUN go-assert-static.sh bin/*
-RUN if [ "${ARCH}" != "s390x" || "${ARCH}" != "arm64" ]; then \
+RUN if [ "${ARCH}" = "amd64" ]; \
         go-assert-boring.sh \
         bin/ctr \
         bin/containerd; \
