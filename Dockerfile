@@ -1,12 +1,12 @@
-ARG BCI_IMAGE=registry.suse.com/bci/bci-base:15.3.17.20.12
-ARG GO_IMAGE=rancher/hardened-build-base:v1.20.3b1
+ARG BCI_IMAGE=registry.suse.com/bci/bci-base
+ARG GO_IMAGE=rancher/hardened-build-base:v1.20.4b11
 FROM ${BCI_IMAGE} as bci
 FROM ${GO_IMAGE} as builder
 ARG ARCH="amd64"
 ARG GOOS="linux"
 # setup required packages
-RUN set -x \
- && apk --no-cache add \
+RUN set -x && \
+    apk --no-cache add \
     btrfs-progs-dev \
     btrfs-progs-static \
     file \
@@ -20,10 +20,13 @@ RUN set -x \
     subversion \
     unzip
 RUN if [ "${ARCH}" == "s390x" ]; then \
-        curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-s390_64.zip; \
+        curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-s390_64.zip; \
         unzip protoc-3.17.3-linux-s390_64.zip -d /usr; \
+    elif [ "${ARCH}" == "arm64" ]; then \
+        curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-aarch_64.zip; \
+        unzip protoc-3.17.3-linux-aarch_64.zip -d /usr; \
     else \
-        curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip; \
+        curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip; \
         unzip protoc-3.17.3-linux-x86_64.zip -d /usr; \
     fi
 # setup containerd build
@@ -38,17 +41,17 @@ RUN export GO_LDFLAGS="-linkmode=external \
     -X ${PKG}/version.Version=${TAG} \
     -X ${PKG}/version.Package=${SRC} \
     -X ${PKG}/version.Revision=$(git rev-parse HEAD) \
-    " \
- && export GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo" \
- && export GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}" \
- && go-build-static.sh ${GO_BUILDFLAGS} -o bin/ctr                      ./cmd/ctr \
- && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd               ./cmd/containerd \
- && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-stress        ./cmd/containerd-stress \
- && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim          ./cmd/containerd-shim \
- && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 \
- && go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
+    " && \
+    export GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo" && \
+    export GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}" && \
+    go-build-static.sh ${GO_BUILDFLAGS} -o bin/ctr                      ./cmd/ctr && \
+    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd               ./cmd/containerd && \
+    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-stress        ./cmd/containerd-stress && \
+    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim          ./cmd/containerd-shim && \
+    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 && \
+    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
 RUN go-assert-static.sh bin/*
-RUN if [ "${ARCH}" != "s390x" ]; then \
+RUN if [ "${ARCH}" = "amd64" ]; then \
         go-assert-boring.sh \
         bin/ctr \
         bin/containerd; \

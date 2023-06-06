@@ -1,17 +1,23 @@
 SEVERITIES = HIGH,CRITICAL
 
-ifeq ($(ARCH),)
-ARCH=$(shell go env GOARCH)
+UNAME_M = $(shell uname -m)
+ARCH=
+ifeq ($(UNAME_M), x86_64)
+	ARCH=amd64
+else ifeq ($(UNAME_M), aarch64)
+	ARCH=arm64
+else 
+	ARCH=$(UNAME_M)
 endif
 
 ifeq ($(OS),)
-OS=$(shell go env GOOS)
+	OS=$(shell go env GOOS)
 endif
 
 ifeq ($(OS),windows)
-DOCKERFILE=Dockerfile.windows
+	DOCKERFILE=Dockerfile.windows
 else
-DOCKERFILE=Dockerfile
+	DOCKERFILE=Dockerfile
 endif
 
 BUILD_META=-build$(shell TZ=UTC date +%Y%m%d)
@@ -21,11 +27,11 @@ SRC ?= github.com/k3s-io/containerd
 TAG ?= v1.6.19-k3s1$(BUILD_META)
 
 ifneq ($(DRONE_TAG),)
-TAG := $(DRONE_TAG)
+	TAG := $(DRONE_TAG)
 endif
 
 ifeq (,$(filter %$(BUILD_META),$(TAG)))
-$(error TAG needs to end with build metadata: $(BUILD_META))
+	$(error TAG needs to end with build metadata: $(BUILD_META))
 endif
 
 .PHONY: image-build

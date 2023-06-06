@@ -4,6 +4,10 @@ manifests:
     platform:
       architecture: amd64
       os: linux
+  - image: rancher/hardened-containerd:{{build.tag}}-arm64-linux
+    platform:
+      architecture: arm64
+      os: linux
   - image: rancher/hardened-containerd:{{build.tag}}-s390x-linux
     platform:
       architecture: s390x
