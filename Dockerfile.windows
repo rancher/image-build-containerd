@@ -1,6 +1,4 @@
-ARG BCI_IMAGE=registry.suse.com/bci/bci-base
 ARG GO_IMAGE=rancher/hardened-build-base:v1.26.7b2
-FROM ${BCI_IMAGE} AS bci
 FROM ${GO_IMAGE} AS builder
 ARG ARCH="amd64"
 ARG GOOS="windows"
@@ -37,5 +35,5 @@ RUN export CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc &&
     install -s bin/* /usr/local/bin && \
     strings /usr/local/bin/containerd.exe | grep -F "${TAG}"
 
-FROM bci
+FROM scratch
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
