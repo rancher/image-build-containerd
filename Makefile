@@ -62,3 +62,14 @@ image-manifest:
 .PHONY: image-scan
 image-scan:
 	trivy image --severity $(SEVERITIES) --no-progress --ignore-unfixed $(ORG)/hardened-containerd:$(TAG)-$(ARCH)-$(OS)
+
+.PHONY: log
+log:
+	@echo "ARCH=$(ARCH)"
+	@echo "TAG=$(TAG)"
+	@echo "ORG=$(ORG)"
+	@echo "PKG=$(PKG)"
+	@echo "SRC=$(SRC)"
+	@echo "BUILD_META=$(BUILD_META)"
+	@echo "K3S_ROOT_VERSION=$(K3S_ROOT_VERSION)"
+	@echo "UNAME_M=$(UNAME_M)"
