@@ -33,7 +33,7 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
-      continue-on-error: true
+      continue-on-error: true 
 
   build-arm64:
     runs-on: ubuntu-latest
