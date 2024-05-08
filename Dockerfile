@@ -19,10 +19,7 @@ RUN set -x && \
     mercurial \
     subversion \
     unzip
-RUN if [ "${ARCH}" == "s390x" ]; then \
-        curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-s390_64.zip; \
-        unzip protoc-3.17.3-linux-s390_64.zip -d /usr; \
-    elif [ "${ARCH}" == "arm64" ]; then \
+RUN if [ "${ARCH}" == "arm64" ]; then \
         curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-aarch_64.zip; \
         unzip protoc-3.17.3-linux-aarch_64.zip -d /usr; \
     else \
@@ -32,7 +29,7 @@ RUN if [ "${ARCH}" == "s390x" ]; then \
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v1.6.19-k3s1"
+ARG TAG="v1.7.11-k3s1"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
