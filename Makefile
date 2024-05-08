@@ -24,7 +24,7 @@ BUILD_META=-build$(shell TZ=UTC date +%Y%m%d)
 ORG ?= rancher
 PKG ?= github.com/containerd/containerd
 SRC ?= github.com/k3s-io/containerd
-TAG ?= v1.6.19-k3s1$(BUILD_META)
+TAG ?= v1.7.11-k3s1$(BUILD_META)
 
 ifneq ($(DRONE_TAG),)
 	TAG := $(DRONE_TAG)
@@ -62,3 +62,14 @@ image-manifest:
 .PHONY: image-scan
 image-scan:
 	trivy image --severity $(SEVERITIES) --no-progress --ignore-unfixed $(ORG)/hardened-containerd:$(TAG)-$(ARCH)-$(OS)
+
+.PHONY: log
+log:
+	@echo "ARCH=$(ARCH)"
+	@echo "TAG=$(TAG)"
+	@echo "ORG=$(ORG)"
+	@echo "PKG=$(PKG)"
+	@echo "SRC=$(SRC)"
+	@echo "BUILD_META=$(BUILD_META)"
+	@echo "K3S_ROOT_VERSION=$(K3S_ROOT_VERSION)"
+	@echo "UNAME_M=$(UNAME_M)"
