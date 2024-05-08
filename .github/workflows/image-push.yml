@@ -45,6 +45,6 @@ jobs:
       with:
         context: .
         push: true
-        tags: husseingalal/hardened-containerd:${{ github.event.release.tag_name }}
+        tags: husseingalal/hardened-containerd:${{ github.event.release.tag_name }}-windows
         file: Dockerfile.Windows
-        platforms: windows/amd64
+        platforms: linux/amd64

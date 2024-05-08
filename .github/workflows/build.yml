@@ -21,13 +21,13 @@ jobs:
       with:
         context: .
         push: false
-        tags: husseingalal/hardened-containerd:${{ env.TAG }}-amd64-linux
+        tags: husseingalal/hardened-containerd:${{ env.TAG }}-amd64
         file: Dockerfile
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.19.0
       with:
-        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-amd64-linux
+        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-amd64
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
@@ -55,7 +55,7 @@ jobs:
       with:
         context: .
         push: false
-        tags: husseingalal/hardened-containerd:${{ env.TAG }}-arm64-linux
+        tags: husseingalal/hardened-containerd:${{ env.TAG }}-arm64
         file: Dockerfile
         outputs: type=docker
         platforms: linux/arm64
@@ -63,7 +63,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.19.0
       with:
-        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-arm64-linux
+        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-arm64
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
@@ -94,7 +94,7 @@ jobs:
         tags: husseingalal/hardened-containerd:${{ env.TAG }}-amd64-windows
         file: Dockerfile.windows
         outputs: type=docker
-        platforms: windows/amd64
+        platforms: linux/amd64
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.19.0
