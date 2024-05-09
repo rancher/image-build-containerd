@@ -8,7 +8,7 @@ name: Build
 jobs:
   build-amd64:
     container: ubuntu-latest
-    runs-on: org-${{ github.repository_owner_id }}-{{ arch }}-k8s
+    runs-on: org-${{ github.repository_owner_id }}-amd64-k8s
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
