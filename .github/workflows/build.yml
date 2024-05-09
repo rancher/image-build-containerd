@@ -7,7 +7,7 @@ on:
 name: Build
 jobs:
   build-amd64:
-    runs-on: ubuntu-latest
+    runs-on: org-${{ github.repository_owner_id }}-{{ arch }}-k8s
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
       continue-on-error: true 
 
   build-arm64:
-    runs-on: ubuntu-latest
+    runs-on: org-${{ github.repository_owner_id }}-{{ arch }}-k8s
     steps:
     - name: Check out code
       uses: actions/checkout@v4
