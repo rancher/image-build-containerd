@@ -7,7 +7,7 @@ on:
 name: Build
 jobs:
   build-amd64:
-    container: ubuntu:latest
+    container: gcr.io/kaniko-project/executor:v1.20.0-debug 
     runs-on: org-${{ github.repository_owner_id }}-amd64-k8s
     steps:
     - name: Checkout code
@@ -18,12 +18,10 @@ jobs:
       run: |
         echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
     
-    - name: Build Image
-      uses: aevea/action-kaniko@master
-      with:
-        image: rancher/hardened-containerd
-        tag: ${{ env.TAG }}-amd64
-        build_file: Dockerfile
+    - name: Build and Push Image to docker registry with kaniko
+        run: |
+          /kaniko/executor --dockerfile="./Dockerfile" \
+            --destination="rancher/hardened-containerd:test-amd64"
 
     # - name: Install Docker
     #   run: apt update && apt install -y docker.io && systemctl start docker
