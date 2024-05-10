@@ -7,7 +7,7 @@ on:
 name: Build
 jobs:
   build-amd64:
-    container: ubuntu-latest
+    container: ubuntu:latest
     runs-on: org-${{ github.repository_owner_id }}-amd64-k8s
     steps:
     - name: Checkout code
@@ -37,7 +37,7 @@ jobs:
       continue-on-error: true 
 
   build-arm64:
-    container: ubuntu-latest
+    container: ubuntu:latest
     runs-on: org-${{ github.repository_owner_id }}-arm64-k8s
     steps:
     - name: Check out code
