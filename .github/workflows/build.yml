@@ -19,7 +19,7 @@ jobs:
         echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
 
     - name: Install Docker
-      run: apt update && apt install docker.io
+      run: apt update && apt install -y docker.io
     - name: Build container image
       uses: docker/build-push-action@v5
       with:
@@ -57,7 +57,7 @@ jobs:
       run: |
         echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
     - name: Install Docker
-      run: apt update && apt install docker.io
+      run: apt update && apt install -y docker.io
     - name: Build container image
       uses: docker/build-push-action@v5
       with:
