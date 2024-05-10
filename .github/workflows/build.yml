@@ -19,7 +19,7 @@ jobs:
         echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
 
     - name: Install Docker
-      run: apt update && apt install -y docker.io
+      run: apt update && apt install -y docker.io && systemctl start docker
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -54,7 +54,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install Docker
-      run: apt update && apt install -y docker.io
+      run: apt update && apt install -y docker.io && systemctl start docker
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
