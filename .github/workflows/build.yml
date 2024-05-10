@@ -8,6 +8,8 @@ name: Build
 jobs:
   build-amd64:
     container: gcr.io/kaniko-project/executor:v1.20.0-debug 
+    permissions:
+      contents: read # read the repository
     runs-on: org-${{ github.repository_owner_id }}-amd64-k8s
     steps:
     - name: Checkout code
