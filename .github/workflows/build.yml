@@ -20,9 +20,10 @@ jobs:
     
     - name: Build Image
       uses: aevea/action-kaniko@master
-       with:
-          image: rancher/hardened-containerd
-          tag: ${{ env.TAG }}-amd64
+      with:
+        image: rancher/hardened-containerd
+        tag: ${{ env.TAG }}-amd64
+        build_file: Dockerfile
 
     # - name: Install Docker
     #   run: apt update && apt install -y docker.io && systemctl start docker
