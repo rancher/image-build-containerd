@@ -12,17 +12,18 @@ jobs:
       contents: read # read the repository
     runs-on: org-${{ github.repository_owner_id }}-amd64-k8s
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    # - name: Checkout code
+    #   uses: actions/checkout@v4
 
-    - name: Set the TAG value
-      id: get-TAG
-      run: |
-        echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
+    # - name: Set the TAG value
+    #   id: get-TAG
+    #   run: |
+    #     echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
     
     - name: Build and Push Image to docker registry with kaniko
       run: |
         /kaniko/executor --dockerfile="./Dockerfile" \
+          --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
           --destination="rancher/hardened-containerd:test-amd64"
 
     # - name: Install Docker
