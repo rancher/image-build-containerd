@@ -24,7 +24,7 @@ jobs:
       run: |
         /kaniko/executor -v debug \
           --no-push
-          --context="${{ github.repositoryUrl }}/${{ github.ref }}#${{ github.sha }}"  \
+          --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
           --destination="rancher/hardened-containerd:test-amd64"
 
     # - name: Install Docker
