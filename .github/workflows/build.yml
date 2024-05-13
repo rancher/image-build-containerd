@@ -22,7 +22,7 @@ jobs:
     
     - name: Build and Push Image to docker registry with kaniko
       run: |
-        /kaniko/executor -v debug --dockerfile="./Dockerfile" \
+        /kaniko/executor -v debug \
           --no-push
           --context="${{ github.repositoryUrl }}/${{ github.ref }}#${{ github.sha }}"  \
           --destination="rancher/hardened-containerd:test-amd64"
