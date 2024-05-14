@@ -26,9 +26,6 @@ jobs:
     #       --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
     #       --destination="rancher/hardened-containerd:test-amd64"
 
-    - name: Install Docker
-      run: apt update && apt install -y docker.io && systemctl start docker
-
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     
@@ -59,9 +56,6 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-
-    - name: Install Docker
-      run: apt update && apt install -y docker.io && systemctl start docker
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
