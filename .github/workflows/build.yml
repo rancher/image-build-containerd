@@ -12,42 +12,42 @@ jobs:
       contents: read # read the repository
     runs-on: org-${{ github.repository_owner_id }}-amd64-k8s
     steps:
-    # - name: Checkout code
-    #   uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    # - name: Set the TAG value
-    #   id: get-TAG
-    #   run: |
-    #     echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
-    
-    - name: Build and Push Image to docker registry with kaniko
+    - name: Set the TAG value
+      id: get-TAG
       run: |
-        /kaniko/executor -v debug \
-          --no-push \
-          --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
-          --destination="rancher/hardened-containerd:test-amd64"
-
-    # - name: Install Docker
-    #   run: apt update && apt install -y docker.io && systemctl start docker
-
-    # - name: Set up QEMU
-    #   uses: docker/setup-qemu-action@v3
+        echo "$(make -s log | grep TAG)" >> "$GITHUB_ENV"
     
-    # - name: Set up Docker Buildx
-    #   uses: docker/setup-buildx-action@v3
+    # - name: Build and Push Image to docker registry with kaniko
+    #   run: |
+    #     /kaniko/executor -v debug \
+    #       --no-push \
+    #       --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
+    #       --destination="rancher/hardened-containerd:test-amd64"
 
-    # - name: Build container image
-    #   uses: docker/build-push-action@v5
-    #   with:
-    #     context: .
-    #     push: false
-    #     tags: husseingalal/hardened-containerd:${{ env.TAG }}-amd64
-    #     file: Dockerfile
+    - name: Install Docker
+      run: apt update && apt install -y docker.io && systemctl start docker
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build container image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: rancher/hardened-containerd:${{ env.TAG }}-amd64
+        file: Dockerfile
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.19.0
       with:
-        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-amd64
+        image-ref: rancher/hardened-containerd:${{ env.TAG }}-amd64
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
@@ -81,7 +81,7 @@ jobs:
       with:
         context: .
         push: false
-        tags: husseingalal/hardened-containerd:${{ env.TAG }}-arm64
+        tags: rancher/hardened-containerd:${{ env.TAG }}-arm64
         file: Dockerfile
         outputs: type=docker
         platforms: linux/arm64
@@ -89,7 +89,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.19.0
       with:
-        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-arm64
+        image-ref: rancher/hardened-containerd:${{ env.TAG }}-arm64
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
@@ -118,7 +118,7 @@ jobs:
       with:
         context: .
         push: false
-        tags: husseingalal/hardened-containerd:${{ env.TAG }}-amd64-windows
+        tags: rancher/hardened-containerd:${{ env.TAG }}-amd64-windows
         file: Dockerfile.windows
         outputs: type=docker
         platforms: linux/amd64
@@ -126,7 +126,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.19.0
       with:
-        image-ref: husseingalal/hardened-containerd:${{ env.TAG }}-amd64-windows
+        image-ref: rancher/hardened-containerd:${{ env.TAG }}-amd64-windows
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
