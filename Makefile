@@ -2,6 +2,7 @@ SEVERITIES = HIGH,CRITICAL
 
 UNAME_M = $(shell uname -m)
 ARCH=
+
 ifeq ($(UNAME_M), x86_64)
 	ARCH=amd64
 else ifeq ($(UNAME_M), aarch64)
@@ -26,12 +27,12 @@ PKG ?= github.com/containerd/containerd
 SRC ?= github.com/k3s-io/containerd
 TAG ?= v1.7.11-k3s1$(BUILD_META)
 
-ifneq ($(DRONE_TAG),)
-	TAG := $(DRONE_TAG)
+ifneq (${GITHUB_ACTION_TAG},)
+	TAG = ${GITHUB_ACTION_TAG}
 endif
 
 ifeq (,$(filter %$(BUILD_META),$(TAG)))
-	$(error TAG needs to end with build metadata: $(BUILD_META))
+	$(error TAG needs to end with build metadata)
 endif
 
 .PHONY: image-build
@@ -66,7 +67,7 @@ image-scan:
 .PHONY: log
 log:
 	@echo "ARCH=$(ARCH)"
-	@echo "TAG=$(TAG)"
+	@echo "TAG=$(TAG:$(BUILD_META)=)"
 	@echo "ORG=$(ORG)"
 	@echo "PKG=$(PKG)"
 	@echo "SRC=$(SRC)"
