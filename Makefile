@@ -26,8 +26,8 @@ PKG ?= github.com/containerd/containerd
 SRC ?= github.com/k3s-io/containerd
 TAG ?= v1.7.11-k3s1$(BUILD_META)
 
-ifneq ($(DRONE_TAG),)
-	TAG := $(DRONE_TAG)
+ifneq ($(GITHUB_ACTION_TAG),)
+	TAG := $(GITHUB_ACTION_TAG)
 endif
 
 ifeq (,$(filter %$(BUILD_META),$(TAG)))
