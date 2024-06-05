@@ -3,6 +3,7 @@ ARG GO_IMAGE=rancher/hardened-build-base:v1.22.3b1
 FROM ${BCI_IMAGE} as bci
 FROM ${GO_IMAGE} as builder
 ARG GOOS="linux"
+ARG TARGETARCH
 # setup required packages
 RUN set -x && \
     apk --no-cache add \
