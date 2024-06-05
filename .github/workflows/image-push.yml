@@ -4,7 +4,7 @@ on:
 
 env:
   GITHUB_ACTION_TAG: ${{ github.ref_name }}
-  
+
 jobs:
   push-multiarch:
     permissions:
@@ -47,6 +47,8 @@ jobs:
         tags: rancher/hardened-containerd:${{ github.event.release.tag_name }}
         file: Dockerfile
         platforms: linux/amd64, linux/arm64
+        build-args: |
+          TAG=${{ env.TAG }}
 
     - name: Build container image for Windows
       uses: docker/build-push-action@v5
@@ -56,3 +58,5 @@ jobs:
         tags: rancher/hardened-containerd:${{ github.event.release.tag_name }}-amd64-windows
         file: Dockerfile.windows
         platforms: linux/amd64
+        build-args: |
+          TAG=${{ env.TAG }}
