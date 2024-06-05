@@ -2,7 +2,6 @@ ARG BCI_IMAGE=registry.suse.com/bci/bci-base
 ARG GO_IMAGE=rancher/hardened-build-base:v1.22.3b1
 FROM ${BCI_IMAGE} as bci
 FROM ${GO_IMAGE} as builder
-ARG ARCH="amd64"
 ARG GOOS="linux"
 # setup required packages
 RUN set -x && \
@@ -19,7 +18,7 @@ RUN set -x && \
     mercurial \
     subversion \
     unzip
-RUN if [ "${ARCH}" == "arm64" ]; then \
+RUN if [ "${TARGETARCH}" == "arm64" ]; then \
         curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-aarch_64.zip; \
         unzip protoc-3.17.3-linux-aarch_64.zip -d /usr; \
     else \
@@ -48,7 +47,7 @@ RUN export GO_LDFLAGS="-linkmode=external \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 && \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
 RUN go-assert-static.sh bin/*
-RUN if [ "${ARCH}" = "amd64" ]; then \
+RUN if [ "${TARGETARCH}" = "amd64" ]; then \
         go-assert-boring.sh \
         bin/ctr \
         bin/containerd; \
