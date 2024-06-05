@@ -70,6 +70,8 @@ jobs:
         file: Dockerfile
         outputs: type=docker
         platforms: linux/arm64
+        build-args: |
+          ARCH=arm64
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.21.0

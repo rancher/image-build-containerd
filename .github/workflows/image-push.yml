@@ -39,16 +39,29 @@ jobs:
         username: ${{ env.DOCKER_USERNAME }}
         password: ${{ env.DOCKER_PASSWORD }}
 
-    - name: Build container image for Linux
+    - name: Build container image for amd64
       uses: docker/build-push-action@v5
       with:
         context: .
         push: true
         tags: rancher/hardened-containerd:${{ github.event.release.tag_name }}
         file: Dockerfile
-        platforms: linux/amd64, linux/arm64
+        platforms: linux/amd64
         build-args: |
           TAG=${{ env.TAG }}
+          ARCH=amd64
+
+    - name: Build container image for arm64
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: rancher/hardened-containerd:${{ github.event.release.tag_name }}
+        file: Dockerfile
+        platforms: linux/arm64
+        build-args: |
+          TAG=${{ env.TAG }}
+          ARCH=arm64
 
     - name: Build container image for Windows
       uses: docker/build-push-action@v5
