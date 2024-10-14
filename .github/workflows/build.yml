@@ -34,7 +34,7 @@ jobs:
         file: Dockerfile
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.24.0
+      uses: aquasecurity/trivy-action@0.27.0
       with:
         image-ref: rancher/hardened-containerd:${{ env.TAG }}-amd64
         format: 'table'
@@ -74,7 +74,7 @@ jobs:
           ARCH=arm64
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.24.0
+      uses: aquasecurity/trivy-action@0.27.0
       with:
         image-ref: rancher/hardened-containerd:${{ env.TAG }}-arm64
         format: 'table'
@@ -111,7 +111,7 @@ jobs:
         platforms: linux/amd64
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.24.0
+      uses: aquasecurity/trivy-action@0.27.0
       with:
         image-ref: rancher/hardened-containerd:${{ env.TAG }}-amd64-windows
         format: 'table'
