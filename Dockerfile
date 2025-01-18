@@ -34,10 +34,11 @@ RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
 RUN git checkout tags/${TAG} -b ${TAG}
-RUN export GO_LDFLAGS="-linkmode=external \
-    -X ${PKG}/version.Version=${TAG} \
-    -X ${PKG}/version.Package=${SRC} \
-    -X ${PKG}/version.Revision=$(git rev-parse HEAD) \
+RUN GOPKG=$(grep '^module ' go.mod | awk '{print $2}'); \
+    export GO_LDFLAGS="-linkmode=external \
+    -X ${GOPKG}/version.Version=${TAG} \
+    -X ${GOPKG}/version.Package=${SRC} \
+    -X ${GOPKG}/version.Revision=$(git rev-parse HEAD) \
     " && \
     export GO_BUILDTAGS="apparmor,seccomp,selinux,static_build,netgo,osusergo" && \
     export GO_BUILDFLAGS="-gcflags=-trimpath=${GOPATH}/src -tags=${GO_BUILDTAGS}" && \
