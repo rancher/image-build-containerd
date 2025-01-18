@@ -1,5 +1,5 @@
 ARG BCI_IMAGE=registry.suse.com/bci/bci-base
-ARG GO_IMAGE=rancher/hardened-build-base:v1.22.7b1
+ARG GO_IMAGE=rancher/hardened-build-base:v1.23.3b1
 FROM ${BCI_IMAGE} as bci
 FROM ${GO_IMAGE} as builder
 ARG GOOS="linux"
@@ -29,7 +29,7 @@ RUN if [ "${TARGETARCH}" == "arm64" ]; then \
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v1.7.11-k3s1"
+ARG TAG="v2.0.2-k3s1"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
@@ -44,8 +44,6 @@ RUN export GO_LDFLAGS="-linkmode=external \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/ctr                      ./cmd/ctr && \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd               ./cmd/containerd && \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-stress        ./cmd/containerd-stress && \
-    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim          ./cmd/containerd-shim && \
-    go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v1  ./cmd/containerd-shim-runc-v1 && \
     go-build-static.sh ${GO_BUILDFLAGS} -o bin/containerd-shim-runc-v2  ./cmd/containerd-shim-runc-v2
 RUN go-assert-static.sh bin/*
 RUN if [ "${TARGETARCH}" = "amd64" ]; then \
