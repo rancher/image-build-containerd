@@ -29,7 +29,7 @@ RUN if [ "${TARGETARCH}" == "arm64" ]; then \
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v2.0.2-k3s1"
+ARG TAG="v2.1.5-k3s1"
 RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
