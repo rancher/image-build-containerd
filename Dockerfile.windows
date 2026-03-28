@@ -20,7 +20,9 @@ RUN set -x && \
     subversion \
     mingw-w64-gcc \
     unzip
+ARG PROTOC_X86_64_SHA256="d4246a5136cf9cd1abc851c521a1ad6b8884df4feded8b9cbd5e2a2226d4b357"
 RUN curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip; \
+    echo "${PROTOC_X86_64_SHA256}  protoc-3.17.3-linux-x86_64.zip" | sha256sum -c -; \
     unzip protoc-3.17.3-linux-x86_64.zip -d /usr;
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"

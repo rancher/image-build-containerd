@@ -19,11 +19,15 @@ RUN set -x && \
     mercurial \
     subversion \
     unzip
+ARG PROTOC_AARCH64_SHA256="ceb29d4890a31ba871829d22c2b7fa28f237d2b91ce4ea2a53e893d60a1cd502"
+ARG PROTOC_X86_64_SHA256="d4246a5136cf9cd1abc851c521a1ad6b8884df4feded8b9cbd5e2a2226d4b357"
 RUN if [ "${TARGETARCH}" == "arm64" ]; then \
         curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-aarch_64.zip; \
+        echo "${PROTOC_AARCH64_SHA256}  protoc-3.17.3-linux-aarch_64.zip" | sha256sum -c -; \
         unzip protoc-3.17.3-linux-aarch_64.zip -d /usr; \
     else \
         curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protoc-3.17.3-linux-x86_64.zip; \
+        echo "${PROTOC_X86_64_SHA256}  protoc-3.17.3-linux-x86_64.zip" | sha256sum -c -; \
         unzip protoc-3.17.3-linux-x86_64.zip -d /usr; \
     fi
 # setup containerd build
