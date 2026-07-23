@@ -38,6 +38,8 @@ RUN git clone --depth=1 https://${SRC}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
 RUN git checkout tags/${TAG} -b ${TAG}
+COPY go-mod-overrides ./go-mod-overrides
+RUN go-mod-overrides.sh ./go-mod-overrides
 RUN GOPKG=$(grep '^module ' go.mod | awk '{print $2}'); \
     export GO_LDFLAGS="-linkmode=external \
     -X ${GOPKG}/version.Version=${TAG} \
