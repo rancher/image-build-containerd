@@ -1,6 +1,4 @@
-ARG BCI_IMAGE=registry.suse.com/bci/bci-base
 ARG GO_IMAGE=rancher/hardened-build-base:v1.26.7b2
-FROM ${BCI_IMAGE} AS bci
 FROM ${GO_IMAGE} AS builder
 ARG GOOS="linux"
 ARG TARGETARCH
@@ -61,5 +59,5 @@ RUN if [ "${TARGETARCH}" = "amd64" ]; then \
 RUN install -s bin/* /usr/local/bin
 RUN containerd --version
 
-FROM bci
+FROM scratch
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
