@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -29,12 +30,6 @@ jobs:
         secrets: |
           secret/data/github/repo/${{ github.repository }}/dockerhub/${{ github.repository_owner }}/credentials username | DOCKER_USERNAME ;
           secret/data/github/repo/${{ github.repository }}/dockerhub/${{ github.repository_owner }}/credentials password | DOCKER_PASSWORD ;
-          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials registry | PRIME_REGISTRY ;
-          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials username | PRIME_REGISTRY_USERNAME ;
-          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials password | PRIME_REGISTRY_PASSWORD ;
-          secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials registry | STAGING_REGISTRY ;
-          secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials username | STAGING_REGISTRY_USERNAME ;
-          secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials password | STAGING_REGISTRY_PASSWORD ;
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
@@ -45,26 +40,21 @@ jobs:
         username: ${{ env.DOCKER_USERNAME }}
         password: ${{ env.DOCKER_PASSWORD }}
 
-    - name: Login to Staging Registry
-      uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
       with:
-        registry: ${{ env.STAGING_REGISTRY }}
-        username: ${{ env.STAGING_REGISTRY_USERNAME }}
-        password: ${{ env.STAGING_REGISTRY_PASSWORD }}
-
-    - name: Login to Prime Registry
-      uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-      with:
-        registry: ${{ env.PRIME_REGISTRY }}
-        username: ${{ env.PRIME_REGISTRY_USERNAME }}
-        password: ${{ env.PRIME_REGISTRY_PASSWORD }}
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build container image
       uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
       with:
         context: .
         push: true
-        tags: rancher/hardened-containerd:${{ github.event.release.tag_name }}
+        tags: |
+          rancher/hardened-containerd:${{ github.event.release.tag_name }}
+          ghcr.io/${{ github.repository_owner }}/hardened-containerd:${{ github.event.release.tag_name }}
         file: Dockerfile
         platforms: linux/amd64, linux/arm64
         build-args: |
@@ -75,7 +65,9 @@ jobs:
       with:
         context: .
         push: true
-        tags: rancher/hardened-containerd:${{ github.event.release.tag_name }}-amd64-windows
+        tags: |
+          rancher/hardened-containerd:${{ github.event.release.tag_name }}-amd64-windows
+          ghcr.io/${{ github.repository_owner }}/hardened-containerd:${{ github.event.release.tag_name }}-amd64-windows
         file: Dockerfile.windows
         platforms: linux/amd64
         build-args: |
