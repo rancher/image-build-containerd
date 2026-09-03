@@ -23,9 +23,7 @@ endif
 
 BUILD_META=-build$(shell TZ=UTC date +%Y%m%d)
 ORG ?= rancher
-PKG ?= github.com/containerd/containerd
-SRC ?= github.com/k3s-io/containerd
-TAG ?= v2.0.2-k3s1$(BUILD_META)
+TAG ?= v2.2.7-k3s1$(BUILD_META)
 
 ifneq (${GITHUB_ACTION_TAG},)
 	TAG = ${GITHUB_ACTION_TAG}
@@ -39,8 +37,6 @@ endif
 image-build:
 	docker build \
 		--pull \
-		--build-arg PKG=$(PKG) \
-		--build-arg SRC=$(SRC) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
 		--build-arg ARCH=$(ARCH) \
 		--build-arg GOOS=$(OS) \
@@ -69,8 +65,6 @@ log:
 	@echo "ARCH=$(ARCH)"
 	@echo "TAG=$(TAG:$(BUILD_META)=)"
 	@echo "ORG=$(ORG)"
-	@echo "PKG=$(PKG)"
-	@echo "SRC=$(SRC)"
 	@echo "BUILD_META=$(BUILD_META)"
 	@echo "K3S_ROOT_VERSION=$(K3S_ROOT_VERSION)"
 	@echo "UNAME_M=$(UNAME_M)"

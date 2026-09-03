@@ -25,11 +25,13 @@ RUN curl -LO https://github.com/google/protobuf/releases/download/v3.17.3/protoc
 # setup containerd build
 ARG SRC="github.com/k3s-io/containerd"
 ARG PKG="github.com/containerd/containerd"
-ARG TAG="v2.0.2-k3s1"
+ARG TAG
 RUN git clone --depth=1 https://${SRC}.git ${GOPATH}/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}
 RUN git fetch --tags --depth=1 origin ${TAG}
 RUN git checkout tags/${TAG} -b ${TAG}
+COPY go-mod-overrides ./go-mod-overrides
+RUN go-mod-overrides.sh ./go-mod-overrides
 RUN export CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc && \
     make binaries GOOS=windows VERSION=${TAG} && \
     install -s bin/* /usr/local/bin && \
