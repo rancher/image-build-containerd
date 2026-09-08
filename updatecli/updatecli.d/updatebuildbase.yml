@@ -101,5 +101,5 @@ actions:
         strategy: auto
       labels:
         - updatecli
-      scmid: default
+    scmid: default
 
