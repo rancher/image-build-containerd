@@ -1,14 +1,14 @@
 SEVERITIES = HIGH,CRITICAL
 
 UNAME_M = $(shell uname -m)
-ARCH=
-
-ifeq ($(UNAME_M), x86_64)
-	ARCH=amd64
-else ifeq ($(UNAME_M), aarch64)
-	ARCH=arm64
-else 
-	ARCH=$(UNAME_M)
+ifndef TARGET_PLATFORMS
+	ifeq ($(UNAME_M), x86_64)
+		TARGET_PLATFORMS:=linux/amd64
+	else ifeq ($(UNAME_M), aarch64)
+		TARGET_PLATFORMS:=linux/arm64
+	else 
+		TARGET_PLATFORMS:=linux/$(UNAME_M)
+	endif
 endif
 
 ifeq ($(OS),)
@@ -35,34 +35,34 @@ endif
 
 .PHONY: image-build
 image-build:
-	docker build \
+	docker buildx build \
 		--pull \
+		--load \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
-		--build-arg ARCH=$(ARCH) \
+		--platform=$(TARGET_PLATFORMS) \
 		--build-arg GOOS=$(OS) \
-		--tag $(ORG)/hardened-containerd:$(TAG)-$(ARCH)-$(OS) \
+		--tag $(ORG)/hardened-containerd:$(TAG) \
 		--file $(DOCKERFILE) \
 		.
 
 .PHONY: image-push
 image-push:
-	docker push $(ORG)/hardened-containerd:$(TAG)-$(ARCH)-$(OS)
+	docker push $(ORG)/hardened-containerd:$(TAG)
 
 .PHONY: image-manifest
 image-manifest:
 	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create --amend \
-		$(ORG)/hardened-containerd:$(TAG) \
-		$(ORG)/hardened-containerd:$(TAG)-$(ARCH)-$(OS)
+		$(ORG)/hardened-containerd:$(TAG)
 	DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push \
 		$(ORG)/hardened-containerd:$(TAG)
 
 .PHONY: image-scan
 image-scan:
-	trivy image --severity $(SEVERITIES) --no-progress --ignore-unfixed $(ORG)/hardened-containerd:$(TAG)-$(ARCH)-$(OS)
+	trivy image --severity $(SEVERITIES) --no-progress --ignore-unfixed $(ORG)/hardened-containerd:$(TAG)
 
 .PHONY: log
 log:
-	@echo "ARCH=$(ARCH)"
+	@echo "TARGET_PLATFORMS=$(TARGET_PLATFORMS)"
 	@echo "TAG=$(TAG:$(BUILD_META)=)"
 	@echo "ORG=$(ORG)"
 	@echo "BUILD_META=$(BUILD_META)"
