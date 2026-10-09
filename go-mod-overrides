@@ -3,7 +3,9 @@
 -replace google.golang.org/grpc=google.golang.org/grpc@v1.83.2
 # golang.org/x/net: CVE-2026-46600
 # Drop once upstream requires golang.org/x/net >= v0.56.0
--replace golang.org/x/net=golang.org/x/net@v0.56.0
+# golang.org/x/net: CVE-2026-97032, CVE-2026-78659, CVE-2026-78663, CVE-2026-78669.
+# Added by the central override in image-build-approver
+-replace golang.org/x/net=golang.org/x/net@v0.60.0
 # golang.org/x/text: CVE-2026-56852.
 # Drop once upstream requires golang.org/x/text >= v0.39.0.
 -replace golang.org/x/text=golang.org/x/text@v0.39.0
