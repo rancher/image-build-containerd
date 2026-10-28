@@ -9,3 +9,7 @@
 # golang.org/x/text: CVE-2026-56852.
 # Drop once upstream requires golang.org/x/text >= v0.39.0.
 -replace golang.org/x/text=golang.org/x/text@v0.39.0
+
+# github.com/go-jose/go-jose/v4: CVE-2026-116587.
+# Drop once upstream requires github.com/go-jose/go-jose/v4 >= v4.1.6.
+-replace github.com/go-jose/go-jose/v4=github.com/go-jose/go-jose/v4@v4.1.6
