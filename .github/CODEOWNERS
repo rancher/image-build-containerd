@@ -2,4 +2,5 @@
 * @rancher/k3s @rancher/release-team
 # No ownership, allows automerge from bots
 Dockerfile
+Dockerfile.windows
 Makefile
